@@ -13,7 +13,7 @@ scikit-learn 0.22.1
 you can download the data files [here](https://tianchi.aliyun.com/dataset/dataDetail?dataId=94490)
 
 ## Tips
-1. download data from [here](https://tianchi.aliyun.com/dataset/dataDetail?dataId=94490), include three files (testA,sample_submit,train.csv)
+1. download data from [here](https://tianchi.aliyun.com/dataset/dataDetail?dataId=94490) （includinging three files：testA,sample_submit,train.csv)， then add files into data folder
 1. run file data_process.py  
 1. run file train.py  
 1. run file test.py
