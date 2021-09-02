@@ -1,47 +1,50 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 31 14:33:12 2021
+Created on Thu Sep  2 15:01:03 2021
 
 @author: gdx
 """
 
-import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
+from sklearn.preprocessing import label_binarize
+from tensorflow.keras import optimizers
+from utils import mc_metrics, LossHistory
+from network import model_creat
 
-# 加载训练集和测试集
-df_train = pd.read_csv('./data/train.csv')
-df_testA = pd.read_csv('./data/testA.csv')
+### load data
+train_path = './data/dataset/train_data_1.npy'
+val_path = './data/dataset/val_data_1.npy'
+time_points = 205
+num_classes = 4 #type num
+train_data = np.load(train_path)
+val_data = np.load(val_path)
 
-# 确认标签列的各类别数量
-x = df_train['label']
-print(df_train['label'].value_counts())
-sns.distplot(x);
+x_train = train_data[:,0:-1].reshape(-1,time_points,1)
+y_train = label_binarize(train_data[:,-1], list(range(num_classes)))
 
-#转化为numpy
-f = lambda x: list(map(float, x.split(','))) #input str out list
+x_val = val_data[:,0:-1].reshape(-1,time_points,1)
+y_val = label_binarize(val_data[:,-1], list(range(num_classes)))
 
-data = np.array(list(df_train['heartbeat_signals'].apply(f)))
-label = np.array(df_train['label'])
+### train model
+batch_size = 256 #批尺寸，即一次训练所选取的样本数，batch_size=1时为在线学习
+epochs = 50 #训练轮数
+model_type = 'resnet' # cnn, lstm
+model_save_path='./model/' + model_type + '2.h5'
 
-#检查缺失值、数据格式等
-np.isnan(data).sum()
+model = model_creat(input_dim=time_points, output_dim=num_classes, model=model_type)
+model.summary()
 
+myhistory = LossHistory(model_path=model_save_path)
+model.compile(loss='categorical_crossentropy',
+              optimizer=optimizers.Adam(lr=0.001),#'Adam',
+              metrics=['categorical_accuracy'])
 
-data = data.astype(np.float32)
-label = label.astype(np.float32)
+#model_fit
+model.fit(x_train, y_train,
+          batch_size=batch_size, epochs=epochs,
+          verbose=0, #进度条
+          validation_data=(x_val, y_val),#验证集
+          callbacks=[myhistory])
 
-
-def acc(_input, target):
-    target=target.squeeze()
-    acc=float((_input.argmax(dim=1) == target).float().mean())
-    return acc
-
-
-
-    
-
-
-
-
+#plot acc-loss curve
+myhistory.loss_plot()
