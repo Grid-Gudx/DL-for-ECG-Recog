@@ -19,4 +19,4 @@ you can download the data files [here](https://tianchi.aliyun.com/dataset/dataDe
 1. run file test.py
 
 ## Result
-![avatar](./result/排名.png)
+![avatar](./result/Rank.png)
