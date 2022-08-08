@@ -1,8 +1,8 @@
 # DL for ECG Recog
  The classification of electrocardiogram signals
 ## description
-天池实验室学习赛：
-零基础入门数据挖掘-心跳信号分类预测
+天池实验室：
+心跳信号分类预测
 
 ## Environment
 Python 3.7  
